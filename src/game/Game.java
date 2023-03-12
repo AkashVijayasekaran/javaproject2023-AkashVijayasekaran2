@@ -1,15 +1,8 @@
 package game;
 
-import city.cs.engine.*;
-import city.cs.engine.Shape;
-import org.jbox2d.common.Vec2;
+import city.cs.engine.DebugViewer;
 
-import javax.swing.JFrame;
-
-import java.awt.*;
-import java.io.IOException;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.*;
 
 /**
  * Your main game entry point
@@ -21,33 +14,25 @@ public class Game {
     public Game() {
 
         //1. make an empty game world
-        World world = new World();
+        //World world = new World();
+        GameWorld world = new GameWorld();
 
-        //2. populate it with bodies (ex: platforms, collectibles, characters)
-
-        //make a ground platform
-        Shape shape = new BoxShape(30, 0.5f);
-        StaticBody ground = new StaticBody(world, shape);
-        ground.setPosition(new Vec2(0f, -11.5f));
-
-        // make a suspended platform
-        Shape platformShape = new BoxShape(3, 0.5f);
-        StaticBody platform1 = new StaticBody(world, platformShape);
-        platform1.setPosition(new Vec2(-8, -4f));
-
-        //make a character (with an overlaid image)
-        Shape studentShape = new BoxShape(1,2);
-        DynamicBody student = new DynamicBody(world, studentShape);
-        student.setPosition(new Vec2(4,-5));
-        student.addImage(new BodyImage("data/student.png", 4));
 
 
         //3. make a view to look into the game world
-        UserView view = new UserView(world, 500, 500);
-
+        ///UserView view = new UserView(world, 1000, 800);
+        GameView view = new GameView(world,1000,800);
 
         //optional: draw a 1-metre grid over the view
         // view.setGridResolution(1);
+        world.getSonic();
+
+        SonicController sonicController= new SonicController(world.getSonic());
+        view.addKeyListener(sonicController);
+
+        view.addMouseListener(new GiveFocus(view));
+
+
 
 
         //4. create a Java window (frame) and add the game
@@ -67,10 +52,12 @@ public class Game {
         frame.setVisible(true);
 
         //optional: uncomment this to make a debugging view
-         JFrame debugView = new DebugViewer(world, 500, 500);
+         JFrame debugView = new DebugViewer(world, 1000, 800);
 
         // start our game world simulation!
         world.start();
+
+        view.requestFocus();
     }
 
     /** Run the game. */
@@ -78,4 +65,5 @@ public class Game {
 
         new Game();
     }
+
 }
